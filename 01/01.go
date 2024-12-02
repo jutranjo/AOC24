@@ -10,17 +10,16 @@ import (
 	"strings"
 )
 
-func CalculateDistance(filename string) (int, error) {
+func ReadNumbers(filename string) ([]int, []int, error) {
+	var leftNumbers []int
+	var rightNumbers []int
 	file, err := os.Open(filename)
 
 	if err != nil {
 		fmt.Println("Error opening file:", err)
-		return 0, err
+		return leftNumbers, rightNumbers, err
 	}
 	defer file.Close()
-
-	var leftNumbers []int
-	var rightNumbers []int
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -38,11 +37,20 @@ func CalculateDistance(filename string) (int, error) {
 		leftNumbers = append(leftNumbers, num1)
 		rightNumbers = append(rightNumbers, num2)
 	}
+	return leftNumbers, rightNumbers, err
+}
+
+func CalculateDistance(filename string) (int, error) {
+	leftNumbers, rightNumbers, err := ReadNumbers(filename)
+	if err != nil {
+		fmt.Println("Error reading numbers:", err)
+		return 0, err
+	}
 
 	sort.Ints(leftNumbers)
 	sort.Ints(rightNumbers)
 
-	var totalDistance float64
+	totalDistance := 0.0
 	for i := 0; i < len(leftNumbers); i++ {
 		totalDistance += math.Abs(float64(leftNumbers[i] - rightNumbers[i]))
 	}
@@ -51,5 +59,24 @@ func CalculateDistance(filename string) (int, error) {
 }
 
 func CalculateSimilarity(filename string) (int, error) {
-	return 0, nil
+	leftNumbers, rightNumbers, err := ReadNumbers(filename)
+	if err != nil {
+		fmt.Println("Error reading numbers:", err)
+		return 0, err
+	}
+
+	similarityScore := 0
+	for _, target := range leftNumbers {
+		count := 0
+		for _, num := range rightNumbers {
+			if num == target {
+				count++
+			}
+		}
+		similarityScore += target * count
+	}
+
+	fmt.Println("similarity score: ", similarityScore)
+
+	return similarityScore, nil
 }

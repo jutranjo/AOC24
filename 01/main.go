@@ -10,4 +10,12 @@ func main() {
 	}
 
 	fmt.Println("Sum of Absolute Differences: ", totalDiff)
+
+	similarityScore, err := CalculateSimilarity("1.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Similarity score = ", similarityScore)
 }
