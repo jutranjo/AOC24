@@ -48,3 +48,19 @@ func TestRegexWhole(t *testing.T) {
 		t.Errorf("findMulParts(xmul(2,4)) = %d; want %d", result, expected)
 	}
 }
+
+func TestPart2Whole(t *testing.T) {
+	lines, err := readMemory("test3_2.txt")
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	result, _ := findMulPartsDoDont(lines[0], true)
+
+	expected := 8 + 8*5
+
+	if result != expected {
+		t.Errorf("findMulParts(xmul(2,4)) = %d; want %d", result, expected)
+	}
+}
