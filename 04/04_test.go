@@ -30,7 +30,33 @@ func TestSmallText(t *testing.T) {
 	}
 }
 
-func TestClockwiseRotation(t *testing.T) {
+func TestOtherText(t *testing.T) {
+	result, err := countAllXMAS("example2.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	expected := 2
+
+	if result != expected {
+		t.Errorf("countAllXMAS(smalltest.txt) = %d; want %d", result, expected)
+	}
+}
+
+func TestBiggerExample(t *testing.T) {
+	result, err := countAllXMAS("biggerExample.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	expected := 18
+
+	if result != expected {
+		t.Errorf("countAllXMAS(smalltest.txt) = %d; want %d", result, expected)
+	}
+}
+
+func TestClockwiseRotation90(t *testing.T) {
 	input := []string{
 		"abc",
 		"def",
@@ -43,9 +69,31 @@ func TestClockwiseRotation(t *testing.T) {
 		"ifc",
 	}
 
-	result := rotateTextClockwise(input)
+	result := rotateTextClockwise90(input)
 
 	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("rotateTextClockwise didn't work, got %s; want %s", result, expected)
+		t.Errorf("rotateTextClockwise90 didn't work, got %s; want %s", result, expected)
+	}
+}
+
+func TestClockwiseRotation45(t *testing.T) {
+	input := []string{
+		"abc",
+		"def",
+		"ghi",
+	}
+
+	expected := []string{
+		"a",
+		"db",
+		"gec",
+		"hf",
+		"i",
+	}
+
+	result := rotateTextClockwise45(input)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("rotateTextClockwise45 didn't work, got %s; want %s", result, expected)
 	}
 }

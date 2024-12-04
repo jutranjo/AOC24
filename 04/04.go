@@ -27,14 +27,16 @@ func readMemory(filename string) ([]string, error) {
 }
 
 func countXMASInLine(input string) int {
-	re, _ := regexp.Compile("XMAS|SAMX")
+	re1, _ := regexp.Compile(`XMAS`)
+	re2, _ := regexp.Compile(`SAMX`)
 
-	matches := re.FindAllStringIndex(input, -1)
+	matches1 := re1.FindAllStringIndex(input, -1)
+	matches2 := re2.FindAllStringIndex(input, -1)
 
-	return len(matches)
+	return len(matches1) + len(matches2)
 }
 
-func rotateTextClockwise(matrix []string) []string {
+func rotateTextClockwise90(matrix []string) []string {
 	n := len(matrix)
 	rotatedMatrix := make([]string, n)
 
@@ -48,6 +50,32 @@ func rotateTextClockwise(matrix []string) []string {
 	return rotatedMatrix
 }
 
+func rotateTextClockwise45(matrix []string) []string {
+	n := len(matrix)
+	rotatedText := []string{}
+
+	//upper triangle of the returned diamond matrix
+	for i := 0; i < n; i++ {
+		newRow := []byte{}
+		for j := 0; j < i+1; j++ {
+			newRow = append(newRow, matrix[i-j][j])
+		}
+
+		rotatedText = append(rotatedText, string(newRow))
+	}
+
+	//lower triangle of the returned diamond matrix
+	for i := 1; i < n; i++ {
+		newRow := []byte{}
+		for j := 0; j < n-i; j++ {
+			newRow = append(newRow, matrix[n-1-j][i+j])
+		}
+
+		rotatedText = append(rotatedText, string(newRow))
+	}
+	return rotatedText
+}
+
 func countAllXMAS(filename string) (int, error) {
 	readFile, err := readMemory(filename)
 	totalXMAS := 0
@@ -58,12 +86,18 @@ func countAllXMAS(filename string) (int, error) {
 	}
 
 	//Up and down XMAS
-	for _, line := range rotateTextClockwise(readFile) {
+	for _, line := range rotateTextClockwise90(readFile) {
 		totalXMAS += countXMASInLine(line)
 	}
 
 	//Diagonal in this direction \
+	for _, line := range rotateTextClockwise45(readFile) {
+		totalXMAS += countXMASInLine(line)
+	}
 
-	//Diagonal in this direction /
+	//Diagonal in this direction
+	for _, line := range rotateTextClockwise45(rotateTextClockwise90(readFile)) {
+		totalXMAS += countXMASInLine(line)
+	}
 	return totalXMAS, err
 }
