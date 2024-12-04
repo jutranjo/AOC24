@@ -97,3 +97,31 @@ func TestClockwiseRotation45(t *testing.T) {
 		t.Errorf("rotateTextClockwise45 didn't work, got %s; want %s", result, expected)
 	}
 }
+
+func TestPart2Small(t *testing.T) {
+	result, err := Part2MASCount("part2_small.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	expected := 1
+
+	if result != expected {
+		t.Errorf("Part2MASCount(part2_small.txt) = %d; want %d", result, expected)
+	}
+}
+
+func TestPart2Large(t *testing.T) {
+	result, err := Part2MASCount("part2large.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	expected := 9
+
+	if result != expected {
+		t.Errorf("Part2MASCount(part2large.txt) = %d; want %d", result, expected)
+	}
+}

@@ -101,3 +101,33 @@ func countAllXMAS(filename string) (int, error) {
 	}
 	return totalXMAS, err
 }
+
+func lookDiagonal(grid []string, row int, column int, rowDirection int, columnDirection int) rune {
+	return rune(grid[row+rowDirection][column+columnDirection])
+}
+
+func Part2MASCount(filename string) (int, error) {
+	puzzleCharacters, err := readMemory(filename)
+
+	n, m := len(puzzleCharacters), len(puzzleCharacters[0])
+
+	totalXMAS := 0
+	for i := 1; i < n-1; i++ {
+		for j := 1; j < m-1; j++ {
+			if puzzleCharacters[i][j] == 'A' {
+				upLeft := lookDiagonal(puzzleCharacters, i, j, -1, -1)
+				downRight := lookDiagonal(puzzleCharacters, i, j, 1, 1)
+				if (upLeft == 'M' && downRight == 'S') || (upLeft == 'S' && downRight == 'M') {
+					upRight := lookDiagonal(puzzleCharacters, i, j, -1, 1)
+					downLeft := lookDiagonal(puzzleCharacters, i, j, 1, -1)
+					if (upRight == 'M' && downLeft == 'S') || (upRight == 'S' && downLeft == 'M') {
+						totalXMAS++
+					}
+				}
+
+			}
+		}
+	}
+
+	return totalXMAS, err
+}
