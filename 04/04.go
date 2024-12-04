@@ -106,6 +106,19 @@ func lookDiagonal(grid []string, row int, column int, rowDirection int, columnDi
 	return rune(grid[row+rowDirection][column+columnDirection])
 }
 
+func isACenteredOnTwoMAS(puzzleCharacters []string, row int, column int) bool {
+	upLeft := lookDiagonal(puzzleCharacters, row, column, -1, -1)
+	downRight := lookDiagonal(puzzleCharacters, row, column, 1, 1)
+	if (upLeft == 'M' && downRight == 'S') || (upLeft == 'S' && downRight == 'M') {
+		upRight := lookDiagonal(puzzleCharacters, row, column, -1, 1)
+		downLeft := lookDiagonal(puzzleCharacters, row, column, 1, -1)
+		if (upRight == 'M' && downLeft == 'S') || (upRight == 'S' && downLeft == 'M') {
+			return true
+		}
+	}
+	return false
+}
+
 func Part2MASCount(filename string) (int, error) {
 	puzzleCharacters, err := readMemory(filename)
 
@@ -115,16 +128,9 @@ func Part2MASCount(filename string) (int, error) {
 	for i := 1; i < n-1; i++ {
 		for j := 1; j < m-1; j++ {
 			if puzzleCharacters[i][j] == 'A' {
-				upLeft := lookDiagonal(puzzleCharacters, i, j, -1, -1)
-				downRight := lookDiagonal(puzzleCharacters, i, j, 1, 1)
-				if (upLeft == 'M' && downRight == 'S') || (upLeft == 'S' && downRight == 'M') {
-					upRight := lookDiagonal(puzzleCharacters, i, j, -1, 1)
-					downLeft := lookDiagonal(puzzleCharacters, i, j, 1, -1)
-					if (upRight == 'M' && downLeft == 'S') || (upRight == 'S' && downLeft == 'M') {
-						totalXMAS++
-					}
+				if isACenteredOnTwoMAS(puzzleCharacters, i, j) {
+					totalXMAS++
 				}
-
 			}
 		}
 	}
