@@ -114,8 +114,9 @@ func isUpdateCorrect(update []int, rules map[int][]int) bool {
 	}
 }
 
-func rearrangeUpdate(update []int, rules map[int][]int) {
-
+func fixUpdate(update []int, rules map[int][]int) {
+	index1, index2 := findWrongPlacement(update, rules)
+	update[index1], update[index2] = update[index2], update[index1]
 }
 
 func solvePart1(filename string) (int, error) {
@@ -146,7 +147,9 @@ func solvePart2(filename string) (int, error) {
 
 	for _, update := range updates {
 		if !isUpdateCorrect(update, rules) {
-			rearrangeUpdate(update, rules)
+			for !isUpdateCorrect(update, rules) {
+				fixUpdate(update, rules)
+			}
 			sumOfMiddlePages += update[len(update)/2]
 		}
 	}
