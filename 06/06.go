@@ -166,18 +166,13 @@ func countX(roomMap [][]rune) int {
 	return totalX
 }
 
-func solvePart1(filename string) (int, error) {
-	roomMap, err := readInput(filename)
-	if err != nil {
-		return 0, err
-	}
-
-	printMap(roomMap)
+func fillXinMap(roomMap [][]rune) {
 	currentPosition := findGuard(roomMap)
 
 	roomWidth := len(roomMap[0])
 	roomHeight := len(roomMap)
 
+	//printMap(roomMap)
 	//reader := bufio.NewReader(os.Stdin)
 
 	for insideBounds(currentPosition, roomWidth, roomHeight) {
@@ -185,6 +180,36 @@ func solvePart1(filename string) (int, error) {
 		//printMap(roomMap)
 		//_, _ = reader.ReadByte()
 	}
+}
+
+func solvePart1(filename string) (int, error) {
+	roomMap, err := readInput(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	fillXinMap(roomMap)
 
 	return countX(roomMap), nil
+}
+
+func solvePart2(filename string) (int, error) {
+	roomMap, err := readInput(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	originalMap := roomMap
+	//fill in 0 and 1 for start position, remember position later
+
+	//printMap(roomMap)
+
+	fillXinMap(roomMap)
+
+	//store all X positions in array
+	//for each X try placing #
+	//	see if it loops?? 130^2 steps should be enough?
+	//count up if it loops
+
+	return 0, nil
 }
