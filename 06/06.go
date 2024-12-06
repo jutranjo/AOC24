@@ -35,7 +35,7 @@ func (gd GuardDirection) String() string {
 	}
 }
 
-type GuardPosition struct {
+type Position struct {
 	x, y int
 }
 
@@ -61,25 +61,23 @@ func printMap(roomMap [][]rune) {
 	for _, row := range roomMap {
 		fmt.Printf("%c \n", row)
 	}
+	fmt.Printf("\n")
 }
 
-func findGuard(roomMap [][]rune) GuardPosition {
-	var guardStartPosition GuardPosition
+func findGuard(roomMap [][]rune) Position {
+	var guardStartPosition Position
 	for i, roomLine := range roomMap {
 		for j, square := range roomLine {
 			if strings.ContainsRune(GuardSymbols, square) {
-				guardStartPosition = GuardPosition{x: i, y: j}
+				guardStartPosition = Position{x: i, y: j}
 			}
 		}
 	}
 	return guardStartPosition
 }
 
-func insideBounds(currentGuardPosition GuardPosition, roomMaxWidthIndex int, roomMaxHeightIndex int) bool {
-	if currentGuardPosition.x < 0 || currentGuardPosition.y < 0 || currentGuardPosition.x > roomMaxWidthIndex-1 || currentGuardPosition.y > roomMaxHeightIndex-1 {
-		return false
-	}
-	return true
+func insideBounds(currentGuardPosition Position, roomMaxWidthIndex int, roomMaxHeightIndex int) bool {
+	return !(currentGuardPosition.x < 0 || currentGuardPosition.y < 0 || currentGuardPosition.x > roomMaxWidthIndex-1 || currentGuardPosition.y > roomMaxHeightIndex-1)
 }
 
 func findGuardDirection(guardRune rune) GuardDirection {
@@ -96,27 +94,76 @@ func findGuardDirection(guardRune rune) GuardDirection {
 	return 5
 }
 
-func findNextSpot
+func lookAtPosition(roomMap [][]rune, position Position) rune {
+	return roomMap[position.x][position.y]
+}
 
-func moveGuard(roomMap [][]rune, currentPosition GuardPosition) {
+func updateSpot(roomMap [][]rune, position Position, newRune rune) {
+	roomMap[position.x][position.y] = newRune
+}
+
+func moveGuard(roomMap [][]rune, currentPosition Position) Position {
+	originalGuardPosition := currentPosition
+
 	direction := findGuardDirection(roomMap[currentPosition.x][currentPosition.y])
 	switch direction {
 	case Up:
-		currentPosition.x-=1
+		currentPosition.x -= 1
 	case Down:
-		currentPosition.x+=1
+		currentPosition.x += 1
 	case Left:
-		currentPosition.y-=1
+		currentPosition.y -= 1
 	case Right:
-		currentPosition.x+=1
+		currentPosition.y += 1
 	}
-	
-	//			 are we out of bounds now? true -> return
-	//nextSpace := findNextSpot(roomMap, currentPosition, direction)
 
-	//		is there an obstacle?
-	//			-> rotate guard 90 degrees, return
-	//		replace guardposition with X, new guard position if . replaced with with <>v^, return
+	roomWidth := len(roomMap[0])
+	roomHeight := len(roomMap)
+
+	if !insideBounds(currentPosition, roomWidth, roomHeight) {
+		updateSpot(roomMap, originalGuardPosition, rune('X')) //old guard spot changed to X
+		return currentPosition
+	}
+
+	nextRune := lookAtPosition(roomMap, currentPosition)
+
+	switch nextRune {
+	case rune('#'):
+		rotateGuardRight(roomMap)
+	case rune('.'), rune('X'):
+		oldGuardSymbol := lookAtPosition(roomMap, originalGuardPosition)
+		updateSpot(roomMap, currentPosition, oldGuardSymbol)  //move guard to . spot
+		updateSpot(roomMap, originalGuardPosition, rune('X')) //old guard spot changed to X
+	}
+
+	return findGuard(roomMap)
+}
+
+func rotateGuardRight(roomMap [][]rune) {
+	guardPosition := findGuard(roomMap)
+	guardRune := lookAtPosition(roomMap, guardPosition)
+	switch guardRune {
+	case rune('^'):
+		updateSpot(roomMap, guardPosition, rune('>'))
+	case rune('v'):
+		updateSpot(roomMap, guardPosition, rune('<'))
+	case rune('<'):
+		updateSpot(roomMap, guardPosition, rune('^'))
+	case rune('>'):
+		updateSpot(roomMap, guardPosition, rune('v'))
+	}
+}
+
+func countX(roomMap [][]rune) int {
+	totalX := 0
+	for _, line := range roomMap {
+		for _, elementRune := range line {
+			if elementRune == rune('X') {
+				totalX++
+			}
+		}
+	}
+	return totalX
 }
 
 func solvePart1(filename string) (int, error) {
@@ -127,14 +174,17 @@ func solvePart1(filename string) (int, error) {
 
 	printMap(roomMap)
 	currentPosition := findGuard(roomMap)
-	fmt.Printf("Start position is [%d %d]", currentPosition.x, currentPosition.y)
 
 	roomWidth := len(roomMap[0])
 	roomHeight := len(roomMap)
 
+	//reader := bufio.NewReader(os.Stdin)
+
 	for insideBounds(currentPosition, roomWidth, roomHeight) {
-		moveGuard(roomMap, currentPosition)
+		currentPosition = moveGuard(roomMap, currentPosition)
+		//printMap(roomMap)
+		//_, _ = reader.ReadByte()
 	}
 
-	return 0, nil
+	return countX(roomMap), nil
 }

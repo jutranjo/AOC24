@@ -14,7 +14,7 @@ func TestStartPosition(t *testing.T) {
 
 	result := findGuard(roomMap)
 
-	expected := GuardPosition{x: 6, y: 4}
+	expected := Position{x: 6, y: 4}
 
 	if result != expected {
 		t.Errorf("Guard not found at correct spot, want %d; got %d", expected, result)
@@ -30,19 +30,19 @@ func TestInsideBounds(t *testing.T) {
 
 	BoundsTests := []struct {
 		name     string
-		position GuardPosition
+		position Position
 		isInside bool
 	}{
-		{name: "Test (1 1)", position: GuardPosition{x: 1, y: 1}, isInside: true},
-		{name: "Test (2 2)", position: GuardPosition{x: 2, y: 2}, isInside: true},
-		{name: "Test (0 0)", position: GuardPosition{x: 0, y: 0}, isInside: true},
-		{name: "Test (-1 0)", position: GuardPosition{x: -1, y: 0}, isInside: false},
-		{name: "Test (0 -1)", position: GuardPosition{x: 0, y: -1}, isInside: false},
-		{name: "Test (-1 -1)", position: GuardPosition{x: -1, y: -1}, isInside: false},
-		{name: "Test (100 100)", position: GuardPosition{x: 100, y: 100}, isInside: false},
-		{name: "Test (9 9)", position: GuardPosition{x: 9, y: 9}, isInside: true},
-		{name: "Test (10 10)", position: GuardPosition{x: 10, y: 10}, isInside: false},
-		{name: "Test (0 10)", position: GuardPosition{x: 0, y: 10}, isInside: false},
+		{name: "Test (1 1)", position: Position{x: 1, y: 1}, isInside: true},
+		{name: "Test (2 2)", position: Position{x: 2, y: 2}, isInside: true},
+		{name: "Test (0 0)", position: Position{x: 0, y: 0}, isInside: true},
+		{name: "Test (-1 0)", position: Position{x: -1, y: 0}, isInside: false},
+		{name: "Test (0 -1)", position: Position{x: 0, y: -1}, isInside: false},
+		{name: "Test (-1 -1)", position: Position{x: -1, y: -1}, isInside: false},
+		{name: "Test (100 100)", position: Position{x: 100, y: 100}, isInside: false},
+		{name: "Test (9 9)", position: Position{x: 9, y: 9}, isInside: true},
+		{name: "Test (10 10)", position: Position{x: 10, y: 10}, isInside: false},
+		{name: "Test (0 10)", position: Position{x: 0, y: 10}, isInside: false},
 	}
 
 	for _, tt := range BoundsTests {
@@ -76,4 +76,30 @@ func TestDirectionDetection(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestMovingOneSpace(t *testing.T) {
+	roomMap, err := readInput("smallExample.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	currentPosition := findGuard(roomMap)
+	moveGuard(roomMap, currentPosition)
+}
+
+func TestPart1(t *testing.T) {
+	got, err := solvePart1("smallExample.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	want := 41
+
+	if got != want {
+		t.Errorf("Part 1 solver wrong, want %d; got %d", want, got)
+	}
+
 }

@@ -1,5 +1,13 @@
 package main
 
+import "fmt"
+
 func main() {
-	solvePart1("smallExample.txt")
+	part1Result, err := solvePart1("input06.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("total squares traversed in part 1: ", part1Result)
 }
