@@ -172,13 +172,13 @@ func fillXinMap(roomMap [][]rune) {
 	roomWidth := len(roomMap[0])
 	roomHeight := len(roomMap)
 
-	//printMap(roomMap)
-	//reader := bufio.NewReader(os.Stdin)
+	printMap(roomMap)
+	reader := bufio.NewReader(os.Stdin)
 
 	for insideBounds(currentPosition, roomWidth, roomHeight) {
 		currentPosition = moveGuard(roomMap, currentPosition)
-		//printMap(roomMap)
-		//_, _ = reader.ReadByte()
+		printMap(roomMap)
+		_, _ = reader.ReadByte()
 	}
 }
 
@@ -199,12 +199,12 @@ func solvePart2(filename string) (int, error) {
 		return 0, err
 	}
 
-	originalMap := roomMap
+	//originalMap := roomMap
 	//fill in 0 and 1 for start position, remember position later
 
-	//printMap(roomMap)
+	printMap(roomMap)
 
-	fillXinMap(roomMap)
+	//fillXinMap(roomMap)
 
 	//store all X positions in array
 	//for each X try placing #

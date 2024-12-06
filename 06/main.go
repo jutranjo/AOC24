@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	part1Result, err := solvePart1("input06.txt")
+	part1Result, err := solvePart1("smallExample.txt")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
