@@ -100,9 +100,20 @@ func findNextSpot
 
 func moveGuard(roomMap [][]rune, currentPosition GuardPosition) {
 	direction := findGuardDirection(roomMap[currentPosition.x][currentPosition.y])
-
-	//nextSpace := findNextSpot(roomMap, currentPosition, direction)
+	switch direction {
+	case Up:
+		currentPosition.x-=1
+	case Down:
+		currentPosition.x+=1
+	case Left:
+		currentPosition.y-=1
+	case Right:
+		currentPosition.x+=1
+	}
+	
 	//			 are we out of bounds now? true -> return
+	//nextSpace := findNextSpot(roomMap, currentPosition, direction)
+
 	//		is there an obstacle?
 	//			-> rotate guard 90 degrees, return
 	//		replace guardposition with X, new guard position if . replaced with with <>v^, return
