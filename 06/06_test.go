@@ -118,3 +118,18 @@ func TestPart2(t *testing.T) {
 	}
 
 }
+
+func TestEdgeCase1(t *testing.T) {
+	roomMap, err := readInput("edgeCase1.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	got := isGuardLooping(roomMap, Position{x: 0, y: 0})
+	expect := true
+
+	if got != expect {
+		t.Errorf("Looping not working on edge case, got %v, want %v", got, expect)
+	}
+}

@@ -241,13 +241,22 @@ func isGuardLooping(roomMap [][]rune, xSpot Position) bool {
 	stepHistory := make(map[PositionDirection]bool)
 	for insideBounds(currentPosition, roomWidth, roomHeight) {
 		stepCount++
-		if xSpot.x == 22 && xSpot.y == 93 && stepCount > 10000 {
+		/*if xSpot.x == 22 && xSpot.y == 93 && stepCount > 10000 {
 			printMap(roomMap)
-		}
+		}*/
 		direction := findGuardDirection(roomMap[currentPosition.x][currentPosition.y])
 		//printMap(roomMap)
-		currentPosition = moveGuard(roomMap, currentPosition)
+
 		currentPosDir := PositionDirection{Pos: currentPosition, Dir: direction}
+		//fmt.Println("step is history? ", stepHistory[currentPosDir], currentPosDir)
+		if !stepHistory[currentPosDir] {
+			//fmt.Println("Added spot to history: ", currentPosDir)
+			stepHistory[currentPosDir] = true
+		} else {
+			return true
+		}
+
+		currentPosition = moveGuard(roomMap, currentPosition)
 
 		currentPosition2 := movePositionInDirection(currentPosition, direction)
 		var nextRune rune
@@ -258,15 +267,6 @@ func isGuardLooping(roomMap [][]rune, xSpot Position) bool {
 		if nextRune == rune('#') {
 			currentPosition = moveGuard(roomMap, currentPosition)
 			currentPosDir = PositionDirection{Pos: currentPosition, Dir: direction}
-
-		}
-
-		//fmt.Println("step is history? ", stepHistory[currentPosDir])
-		if !stepHistory[currentPosDir] {
-			//fmt.Println("Added spot to history: ", currentPosDir)
-			stepHistory[currentPosDir] = true
-		} else {
-			return true
 		}
 
 		//stepCount++
@@ -306,9 +306,9 @@ func solvePart2(filename string) (int, error) {
 	goodSpots := 0
 	//for each X try placing #
 	for _, xSpot := range allXpositions {
-		if !(xSpot.x == 22 && xSpot.y == 93) {
+		/*if !(xSpot.x == 8 && xSpot.y == 7) {
 			continue
-		}
+		}*/
 		fmt.Println("Checking spot ", xSpot)
 		alteredMap := deepCopyMap(originalMap)
 		updateSpot(alteredMap, xSpot, rune('#'))
@@ -317,6 +317,7 @@ func solvePart2(filename string) (int, error) {
 		if isGuardLooping(alteredMap, xSpot) {
 			fmt.Println("Guard is looping!")
 			goodSpots++
+			//printMap(alteredMap)
 		}
 
 		//count up if it loops
