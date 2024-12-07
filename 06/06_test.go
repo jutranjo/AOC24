@@ -103,3 +103,18 @@ func TestPart1(t *testing.T) {
 	}
 
 }
+
+func TestPart2(t *testing.T) {
+	got, err := solvePart2("smallExample.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	want := 6
+
+	if got != want {
+		t.Errorf("Part 1 solver wrong, want %d; got %d", want, got)
+	}
+
+}
