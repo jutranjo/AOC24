@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 )
 
 const GuardSymbols = "^v<>"
@@ -303,22 +304,32 @@ func solvePart2(filename string) (int, error) {
 	allXpositions := findAllX(roomMap)
 	fmt.Println("X to be checked: ", len(allXpositions))
 
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
 	goodSpots := 0
 	//for each X try placing #
 	for _, xSpot := range allXpositions {
 		/*if !(xSpot.x == 8 && xSpot.y == 7) {
 			continue
 		}*/
-		fmt.Println("Checking spot ", xSpot)
-		alteredMap := deepCopyMap(originalMap)
-		updateSpot(alteredMap, xSpot, rune('#'))
 
-		//	see if it loops?? 130^2 steps should be enough?
-		if isGuardLooping(alteredMap, xSpot) {
-			fmt.Println("Guard is looping!")
-			goodSpots++
-			//printMap(alteredMap)
-		}
+		wg.Add(1)
+		go func(originalMap [][]rune, xSpot Position) {
+			defer wg.Done()
+			//fmt.Println("Checking spot ", xSpot)
+			alteredMap := deepCopyMap(originalMap)
+			updateSpot(alteredMap, xSpot, rune('#'))
+
+			//	see if it loops?? 130^2 steps should be enough?
+			if isGuardLooping(alteredMap, xSpot) {
+				//fmt.Println("Guard is looping!")
+				mu.Lock()
+				goodSpots++
+				mu.Unlock()
+				//printMap(alteredMap)
+			}
+		}(originalMap, xSpot)
 
 		//count up if it loops
 	}
