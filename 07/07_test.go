@@ -12,7 +12,7 @@ func TestSmallExample(t *testing.T) {
 		return
 	}
 
-	want := 9 //3749
+	want := 3749
 
 	if got != want {
 		t.Errorf("Part 1 not working on test example, got %d, want %d", got, want)

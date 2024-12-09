@@ -74,13 +74,13 @@ func readInput(filename string) ([]Equation, error) {
 // make it recursive
 func isTrueEquation(eq Equation) bool {
 
+	forwardOperations := []operation{add, multiply}
 	//are these even in the input data?
 	if len(eq.RemainingNumbers) == 1 {
 		return eq.TestValue == eq.RemainingNumbers[0]
 	}
 	//base example
 	if len(eq.RemainingNumbers) == 2 {
-		forwardOperations := []operation{add, multiply}
 
 		for _, op := range forwardOperations {
 			a := eq.RemainingNumbers[0]
@@ -94,19 +94,20 @@ func isTrueEquation(eq Equation) bool {
 		}
 		return false
 	} else {
-		backwardOperations := []operation{subtract, divide}
-
-		for _, op := range backwardOperations {
-
-			newTestValue := op(eq.TestValue, eq.RemainingNumbers[0])
-			shorterNumbers := eq.RemainingNumbers[1:]
-			shorterEq := Equation{TestValue: newTestValue, RemainingNumbers: shorterNumbers}
+		forwardOperations := []operation{add, multiply}
+		isTrue := false
+		for _, op := range forwardOperations {
+			shorterNumbers := append([]int{op(eq.RemainingNumbers[0], eq.RemainingNumbers[1])}, eq.RemainingNumbers[2:]...)
+			shorterEq := Equation{TestValue: eq.TestValue, RemainingNumbers: shorterNumbers}
 			fmt.Println("calling again with shorter eq: ", shorterEq)
-			return isTrueEquation(shorterEq)
+			//return isTrueEquation(shorterEq)
+			tempBool := isTrueEquation(shorterEq)
+			if !isTrue {
+				isTrue = tempBool
+			}
 		}
+		return isTrue
 	}
-
-	return false //this should never be reached
 }
 
 func solvePart1(filename string) (int, error) {
@@ -115,16 +116,15 @@ func solvePart1(filename string) (int, error) {
 		return 0, err
 	}
 
-	sumOfTrueEquations := len(listOfNumbers) //0
-	/*
-		for _, equation := range listOfNumbers {
-			fmt.Println("Line being looked at is :", equation)
+	sumOfTrueEquations := 0
 
-			if isTrueEquation(equation) {
-				sumOfTrueEquations += equation.TestValue
-			}
+	for _, equation := range listOfNumbers {
+		fmt.Println("Line being looked at is :", equation)
+
+		if isTrueEquation(equation) {
+			sumOfTrueEquations += equation.TestValue
 		}
-	*/
+	}
 
 	return sumOfTrueEquations, nil
 }
