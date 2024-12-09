@@ -134,3 +134,23 @@ func solvePart1(filename string) (int, error) {
 
 	return sumOfTrueEquations, nil
 }
+
+func solvePart2(filename string) (int, error) {
+	listOfNumbers, err := readInput(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	sumOfTrueEquations := 0
+	operations := []operation{add, multiply, concate}
+
+	for _, equation := range listOfNumbers {
+		//fmt.Println("Line being looked at is :", equation)
+
+		if isTrueEquation(equation, operations) {
+			sumOfTrueEquations += equation.TestValue
+		}
+	}
+
+	return sumOfTrueEquations, nil
+}
