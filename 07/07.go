@@ -66,7 +66,10 @@ func readInput(filename string) ([]Equation, error) {
 // make it recursive
 func isTrueEquation(eq Equation) bool {
 	operations := []operation{add, multiply}
+
+	//base example
 	if len(eq.RemainingNumbers) == 2 {
+
 		for _, op := range operations {
 			a := eq.RemainingNumbers[0]
 			b := eq.RemainingNumbers[1]
@@ -79,9 +82,9 @@ func isTrueEquation(eq Equation) bool {
 		}
 		return false
 	}
-	//base example
 
 	//call self with shorter eq
+
 }
 
 func solvePart1(filename string) (int, error) {
