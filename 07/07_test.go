@@ -25,9 +25,9 @@ func TestExampleLine2(t *testing.T) {
 		fmt.Println("Error:", err)
 		return
 	}
-
+	operations := []operation{add, multiply}
 	fmt.Println("input is", listOfNumbers[1])
-	got := isTrueEquation(listOfNumbers[1])
+	got := isTrueEquation(listOfNumbers[1], operations)
 	want := true
 
 	if got != want {

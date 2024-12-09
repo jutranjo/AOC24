@@ -19,15 +19,22 @@ func add(a, b int) int {
 	return a + b
 }
 
-func subtract(a, b int) int {
-	return a - b
-}
-
 func multiply(a, b int) int {
 	return a * b
 }
-func divide(a, b int) int {
-	return a / b
+
+func concate(a, b int) int {
+	stringA := strconv.Itoa(a)
+	stringB := strconv.Itoa(b)
+
+	resultString := stringA + stringB
+
+	concInt, err := strconv.Atoi(resultString)
+	if err != nil {
+		fmt.Println("issue with big numbers!")
+		panic("panic")
+	}
+	return concInt
 }
 
 func parseLineIntoEquation(lineInput string) (Equation, error) {
@@ -72,9 +79,8 @@ func readInput(filename string) ([]Equation, error) {
 }
 
 // make it recursive
-func isTrueEquation(eq Equation) bool {
+func isTrueEquation(eq Equation, operations []operation) bool {
 
-	forwardOperations := []operation{add, multiply}
 	//are these even in the input data?
 	if len(eq.RemainingNumbers) == 1 {
 		return eq.TestValue == eq.RemainingNumbers[0]
@@ -82,11 +88,11 @@ func isTrueEquation(eq Equation) bool {
 	//base example
 	if len(eq.RemainingNumbers) == 2 {
 
-		for _, op := range forwardOperations {
+		for _, op := range operations {
 			a := eq.RemainingNumbers[0]
 			b := eq.RemainingNumbers[1]
 			result := op(a, b)
-			fmt.Println("result:", result, "is it true?", result == eq.TestValue)
+			//fmt.Println("result:", result, "is it true?", result == eq.TestValue)
 
 			if result == eq.TestValue {
 				return true
@@ -94,14 +100,13 @@ func isTrueEquation(eq Equation) bool {
 		}
 		return false
 	} else {
-		forwardOperations := []operation{add, multiply}
 		isTrue := false
-		for _, op := range forwardOperations {
+		for _, op := range operations {
 			shorterNumbers := append([]int{op(eq.RemainingNumbers[0], eq.RemainingNumbers[1])}, eq.RemainingNumbers[2:]...)
 			shorterEq := Equation{TestValue: eq.TestValue, RemainingNumbers: shorterNumbers}
-			fmt.Println("calling again with shorter eq: ", shorterEq)
+			//fmt.Println("calling again with shorter eq: ", shorterEq)
 			//return isTrueEquation(shorterEq)
-			tempBool := isTrueEquation(shorterEq)
+			tempBool := isTrueEquation(shorterEq, operations)
 			if !isTrue {
 				isTrue = tempBool
 			}
@@ -117,11 +122,12 @@ func solvePart1(filename string) (int, error) {
 	}
 
 	sumOfTrueEquations := 0
+	operations := []operation{add, multiply}
 
 	for _, equation := range listOfNumbers {
-		fmt.Println("Line being looked at is :", equation)
+		//fmt.Println("Line being looked at is :", equation)
 
-		if isTrueEquation(equation) {
+		if isTrueEquation(equation, operations) {
 			sumOfTrueEquations += equation.TestValue
 		}
 	}
