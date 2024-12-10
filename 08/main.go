@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const FileToRun = "smallExample.txt"
+const FileToRun = "input08.txt"
 
 func main() {
 	resultPart1, err := solvePart1(FileToRun)
