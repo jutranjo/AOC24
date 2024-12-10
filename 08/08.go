@@ -71,6 +71,13 @@ func findANCoordinate(ant1 Coordinate, ant2 Coordinate) Coordinate {
 	return Coordinate{x: ant2.x + deltaX, y: ant2.y + deltaY}
 }
 
+func findHarmonicANCoordinate(ant1 Coordinate, ant2 Coordinate, n_harmonic int) Coordinate {
+	deltaX := ant2.x - ant1.x
+	deltaY := ant2.y - ant1.y
+
+	return Coordinate{x: ant2.x + deltaX*n_harmonic, y: ant2.y + deltaY*n_harmonic}
+}
+
 func isAntiNodeInBounds(antinodeCoordinate Coordinate, antennaRuneMap [][]rune) bool {
 	width := len(antennaRuneMap[0]) - 1
 	height := len(antennaRuneMap) - 1
@@ -107,6 +114,36 @@ func countAntinodes(antennaHashMap map[rune][]Coordinate, antennaRuneMap [][]run
 	return len(antinodesFound)
 }
 
+func countHarmonicAntinodes(antennaHashMap map[rune][]Coordinate, antennaRuneMap [][]rune) int {
+	antinodesFound := make(map[Coordinate]bool)
+
+	for _, values := range antennaHashMap {
+		for _, antenna1 := range values {
+			for _, antenna2 := range values {
+				if antenna1 != antenna2 {
+					//fmt.Printf("key %c antenna %d-%d ", key, antenna1, antenna2)
+
+					n_harmonic := 0
+					antinodeCoordinate := findHarmonicANCoordinate(antenna1, antenna2, n_harmonic)
+					antinodesFound[antinodeCoordinate] = true
+					antennaRuneMap[antinodeCoordinate.x][antinodeCoordinate.y] = rune('#')
+
+					for isAntiNodeInBounds(antinodeCoordinate, antennaRuneMap) {
+						n_harmonic++
+						antinodesFound[antinodeCoordinate] = true
+						antennaRuneMap[antinodeCoordinate.x][antinodeCoordinate.y] = rune('#')
+
+						antinodeCoordinate = findHarmonicANCoordinate(antenna1, antenna2, n_harmonic)
+					}
+				}
+
+			}
+		}
+	}
+	printRuneMap(antennaRuneMap)
+	return len(antinodesFound)
+}
+
 func solvePart1(filename string) (int, error) {
 	antennaRuneMap, err := readInput(filename)
 	if err != nil {
@@ -121,4 +158,20 @@ func solvePart1(filename string) (int, error) {
 	antinodeCount := countAntinodes(antennaHashMap, antennaRuneMap)
 
 	return antinodeCount, nil
+}
+
+func solvePart2(filename string) (int, error) {
+	antennaRuneMap, err := readInput(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	printRuneMap(antennaRuneMap)
+
+	antennaHashMap := parseMap(antennaRuneMap)
+
+	antinodeCount := countHarmonicAntinodes(antennaHashMap, antennaRuneMap)
+
+	return antinodeCount, nil
+
 }
