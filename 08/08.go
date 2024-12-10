@@ -169,6 +169,7 @@ func solvePart2(filename string) (int, error) {
 	printRuneMap(antennaRuneMap)
 
 	antennaHashMap := parseMap(antennaRuneMap)
+	printHashmap(antennaHashMap)
 
 	antinodeCount := countHarmonicAntinodes(antennaHashMap, antennaRuneMap)
 
