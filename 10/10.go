@@ -63,8 +63,17 @@ func findAllTrailheads(topographicMap [][]int) []Position {
 	return allTrailHeads
 }
 
-func countTrailheadScore(trailhead Position, topographicMap [][]int) int {
+func neighboursWithinBounds(trailhead Position, topographicMap [][]int) []Position {
+	//check up down left right if it's within bounds
+}
 
+func findNeighboursOfOneHeigher(trailhead Position, topographicMap [][]int) []Position {
+	validPositions := neighboursWithinBounds(trailhead, topographicMap)
+	//go through validPositions
+}
+
+func countTrailheadScore(trailhead Position, topographicMap [][]int) int {
+	findNeighboursOfOneHeigher(trailhead, topographicMap) //do this 9 times?
 	return 1
 }
 
