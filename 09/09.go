@@ -82,17 +82,22 @@ func findEmptySectorIndexes(fullDiskMap []Sector) []int {
 
 func findSectorBlockIndexes(fullDiskMap []Sector, findFiles bool) []Block {
 	var listOfEmptySectorBlockIndexes []Block
-
+	print("finding files \n")
 	isNewBlock := false
 	//var nextFreeBlock Block
 	nextFreeBlock := Block{sector: fullDiskMap[0]}
 	for index, sector := range fullDiskMap {
+		//isNewID := !(sector.FileID == nextFreeBlock.sector.FileID)
+		fmt.Printf("at sector ID %d: new Block ID? %v \n", sector.FileID, nextFreeBlock.sector.FileID)
+
 		if sector.isFile == findFiles && isNewBlock {
+			fmt.Println("starting new block")
 			isNewBlock = false
 			nextFreeBlock.startIndex = index
 			nextFreeBlock.sector = sector
 		}
-		if sector.isFile != findFiles && !isNewBlock {
+		if (sector.isFile != findFiles) && !isNewBlock {
+			fmt.Println("found end of bloc")
 			isNewBlock = true
 			nextFreeBlock.length = index - nextFreeBlock.startIndex
 			if nextFreeBlock.length != 0 {
@@ -100,6 +105,7 @@ func findSectorBlockIndexes(fullDiskMap []Sector, findFiles bool) []Block {
 			}
 
 		}
+		fmt.Println("Next sector!")
 	}
 
 	nextFreeBlock.length = len(fullDiskMap) - nextFreeBlock.startIndex
@@ -179,21 +185,21 @@ func defragTheDisk(fullDiskMap []Sector) {
 	emptySectorBlocks := findSectorBlockIndexes(fullDiskMap, false)
 	fileSectorBlocks := findSectorBlockIndexes(fullDiskMap, true)
 
-	//fmt.Println("empty blocks: ", emptySectorBlocks)
-	//fmt.Println("file blocks: ", fileSectorBlocks)
+	fmt.Println("empty blocks: ", emptySectorBlocks)
+	fmt.Println("file blocks: ", fileSectorBlocks)
 
-	for i := len(fileSectorBlocks) - 1; i > 0; i-- {
-		fmt.Println("Trying to move block ", fileSectorBlocks[i])
-		requiredSpace := fileSectorBlocks[i].length
-		for _, freeBlock := range emptySectorBlocks {
-			//fmt.Printf("Checking free block %v vs required lenght %d\n", freeBlock, requiredSpace)
-			if freeBlock.length >= requiredSpace && freeBlock.startIndex < fileSectorBlocks[i].startIndex {
-				moveBlock(fullDiskMap, fileSectorBlocks[i], freeBlock.startIndex)
-				emptySectorBlocks = findSectorBlockIndexes(fullDiskMap, false)
-			}
-		}
-		printFullDiskMap(fullDiskMap)
-	}
+	// for i := len(fileSectorBlocks) - 1; i > 0; i-- {
+	// 	fmt.Println("Trying to move block ", fileSectorBlocks[i])
+	// 	requiredSpace := fileSectorBlocks[i].length
+	// 	for _, freeBlock := range emptySectorBlocks {
+	// 		//fmt.Printf("Checking free block %v vs required lenght %d\n", freeBlock, requiredSpace)
+	// 		if freeBlock.length >= requiredSpace && freeBlock.startIndex < fileSectorBlocks[i].startIndex {
+	// 			moveBlock(fullDiskMap, fileSectorBlocks[i], freeBlock.startIndex)
+	// 			emptySectorBlocks = findSectorBlockIndexes(fullDiskMap, false)
+	// 		}
+	// 	}
+	// 	printFullDiskMap(fullDiskMap)
+	// }
 }
 
 func printFullDiskMap(fullDiskMap []Sector) {
