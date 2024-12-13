@@ -117,6 +117,19 @@ func countStones(stones LinkedStones) int {
 	return stoneCount
 }
 
+func highestStone(stones LinkedStones) int {
+	stone := stones.head
+
+	highStone := 0
+	for stone != nil {
+		if stone.number > highStone {
+			highStone = stone.number
+		}
+		stone = stone.next
+	}
+	return highStone
+}
+
 func solvePart1(filename string) (int, error) {
 	startingStonesString, err := readInput(filename)
 	if err != nil {
@@ -128,7 +141,9 @@ func solvePart1(filename string) (int, error) {
 	for index := range 75 {
 		fmt.Println("Blink count is ", index)
 		fmt.Println("Stone count is ", countStones(stones))
+		fmt.Println("Highest Stone number is ", highestStone(stones))
 		blink(stones)
+		//part 2: make a hashmap of all the stone counts maybe
 	}
 
 	stoneCount := countStones(stones)
