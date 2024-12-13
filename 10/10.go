@@ -169,9 +169,6 @@ func countTrailheadRating(trailhead Position, topographicMap [][]int) int {
 	allFutures := findAllPaths(trailhead, topographicMap, allPossiblePaths)
 
 	trailHeadRating := 0
-	// var uniquePeaks map[Position]bool
-	// uniquePeaks := make(map[Position]bool)
-	// fmt.Println("all futures: ", allFutures)
 	for _, pathFromTrailhead := range allFutures {
 		// fmt.Println(pathFromTrailhead, len(pathFromTrailhead))
 
@@ -197,7 +194,6 @@ func solvePart1(filename string) (int, error) {
 
 	totalScore := 0
 	for _, trailhead := range listOfTrailHeads {
-		// fmt.Println("Doing trailhead ", trailhead)
 		totalScore += countTrailheadScore(trailhead, topographicMap)
 	}
 
