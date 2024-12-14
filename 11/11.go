@@ -138,10 +138,16 @@ func solvePart1(filename string) (int, error) {
 
 	stones := parseStartingStone(startingStonesString)
 
-	for index := range 75 {
+	overallHighStone := 0
+	for index := range 25 {
 		fmt.Println("Blink count is ", index)
 		fmt.Println("Stone count is ", countStones(stones))
-		fmt.Println("Highest Stone number is ", highestStone(stones))
+		highStone := highestStone(stones)
+		fmt.Println("Highest Stone number is ", highStone)
+		if overallHighStone < highStone {
+			overallHighStone = highStone
+		}
+		fmt.Println("Highest stone ever is ", overallHighStone)
 		blink(stones)
 		//part 2: make a hashmap of all the stone counts maybe
 	}
