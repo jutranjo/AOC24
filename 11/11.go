@@ -57,6 +57,17 @@ func parseStartingStone(stoneStrings []string) LinkedStones {
 	return linkedStones
 }
 
+func parseIntoHash(stoneStrings []string) map[int]int {
+	stoneCounts := make(map[int]int)
+
+	for _, numberString := range stoneStrings {
+		newStoneNumber, _ := strconv.Atoi(numberString)
+		stoneCounts[newStoneNumber]++
+	}
+
+	return stoneCounts
+}
+
 func printStones(stones LinkedStones) {
 	stone := stones.head
 
@@ -106,6 +117,43 @@ func blink(stones LinkedStones) {
 	}
 }
 
+func applyRule2Hash(oldStoneNumber int, oldStones map[int]int, deltaStones map[int]int) {
+	numberToSplitString := strconv.Itoa(oldStoneNumber)
+
+	mid := len(numberToSplitString) / 2
+	leftString := numberToSplitString[:mid]
+	rightString := numberToSplitString[mid:]
+	leftNumber, _ := strconv.Atoi(leftString)
+	rightNumber, _ := strconv.Atoi(rightString)
+
+	// fmt.Println("Splitting ", oldStoneNumber, "we have ", oldStones[oldStoneNumber], "of them")
+
+	deltaStones[leftNumber] += oldStones[oldStoneNumber]
+	deltaStones[rightNumber] += oldStones[oldStoneNumber]
+	deltaStones[oldStoneNumber] -= oldStones[oldStoneNumber]
+
+	// fmt.Println("right number is ", rightNumber, "the new count is ", deltaStones[rightNumber])
+}
+
+func blinkHash(stones map[int]int) map[int]int {
+	deltaStones := make(map[int]int)
+
+	for stoneNumber, stoneCount := range stones {
+		// fmt.Println("Blinking stonenumber", stoneNumber)
+		if stoneNumber == 0 {
+			deltaStones[1] += stoneCount
+			deltaStones[0] -= stoneCount
+		} else if len(strconv.Itoa(stoneNumber))%2 == 0 {
+			applyRule2Hash(stoneNumber, stones, deltaStones)
+		} else {
+			deltaStones[stoneNumber*2024] += stoneCount
+			deltaStones[stoneNumber] -= stoneCount
+		}
+	}
+
+	return deltaStones
+}
+
 func countStones(stones LinkedStones) int {
 	stone := stones.head
 
@@ -143,11 +191,11 @@ func solvePart1(filename string) (int, error) {
 		fmt.Println("Blink count is ", index)
 		fmt.Println("Stone count is ", countStones(stones))
 		highStone := highestStone(stones)
-		fmt.Println("Highest Stone number is ", highStone)
+		// fmt.Println("Highest Stone number is ", highStone)
 		if overallHighStone < highStone {
 			overallHighStone = highStone
 		}
-		fmt.Println("Highest stone ever is ", overallHighStone)
+		// fmt.Println("Highest stone ever is ", overallHighStone)
 		blink(stones)
 		//part 2: make a hashmap of all the stone counts maybe
 	}
@@ -155,4 +203,43 @@ func solvePart1(filename string) (int, error) {
 	stoneCount := countStones(stones)
 
 	return stoneCount, nil
+}
+
+func subtractMaps(stones map[int]int, delta map[int]int) map[int]int {
+	for stone, count := range delta {
+		stones[stone] += count
+	}
+	return stones
+}
+
+func deleteZeros(stones map[int]int) {
+	for number, count := range stones {
+		if count == 0 {
+			delete(stones, number)
+		}
+	}
+}
+
+func solvePart2(filename string) (int, error) {
+	startingStonesString, err := readInput(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	stones := parseIntoHash(startingStonesString)
+
+	for range 75 {
+		deltaStones := blinkHash(stones)
+		stones = subtractMaps(stones, deltaStones)
+		// fmt.Println("Blink count is ", index)
+		deleteZeros(stones)
+		// fmt.Printf("\nStones are %#v\n", stones)
+	}
+
+	totalstoneCount := 0
+	for _, stoneCount := range stones {
+		totalstoneCount += stoneCount
+	}
+
+	return totalstoneCount, nil
 }
