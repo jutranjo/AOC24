@@ -59,6 +59,18 @@ func plotGardenPlots(gardenPlots [][]Plot) {
 
 }
 
+func findUnassignedPlot(gardenPlots [][]Plot) Plot {
+
+}
+
+func assignPlotIDs(gardenPlots [][]Plot) {
+	currentID := 0
+	for nextPlot := findUnassignedPlot(gardenPlots); nextPlot != nil; nextPlot = findUnassignedPlot(gardenPlots) {
+		nextPlot.groupID = currentID
+	}
+
+}
+
 func solvePart1(filename string) (int, error) {
 	gardenPlotsStrings, err := readInput(filename)
 	if err != nil {
@@ -69,5 +81,8 @@ func solvePart1(filename string) (int, error) {
 
 	plotGardenPlots(gardenPlots)
 
+	assignPlotIDs(gardenPlots)
+
+	plotGardenPlots(gardenPlots)
 	return 0, nil
 }
